@@ -1,80 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Extract .7z File (using 7z-wasm)</title>
+  <title>Simple Test</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Extract .7z File</h1>
-        <p>Select a .7z file to extract its contents:</p>
-        <input type="file" id="file-input" accept=".7z" />
-        <div id="output"></div>
-    </div>
 
-    <script type="module">
-        console.log("7z-wasm library loaded:", 7z); 
-
-        const fileInput = document.getElementById('file-input');
-        const outputDiv = document.getElementById('output');
-
-        fileInput.addEventListener('change', async (event) => {
-            const file = event.target.files[0];
-            if (!file || !file.name.endsWith('.7z')) {
-                outputDiv.innerText = 'Please select a valid .7z file.';
-                return;
-            }
-
-            outputDiv.innerText = 'Extracting...';
-
-            try {
-                const arrayBuffer = await file.arrayBuffer(); 
-                console.log("File read successfully.");
-                const { files } = await 7z.extract(arrayBuffer);
-
-                outputDiv.innerHTML = ''; 
-                if (files.length === 0) {
-                    outputDiv.innerText = 'No files found in the .7z archive.';
-                } else {
-                    files.forEach((file) => {
-                        const link = document.createElement('a');
-                        link.href = URL.createObjectURL(new Blob([file.data], { type: 'application/octet-stream' }));
-                        link.download = file.name;
-                        link.innerText = 'Download ' + file.name;
-                        link.style.display = 'block';
-                        outputDiv.appendChild(link);
-                    });
-                }
-            } catch (error) {
-                console.error("Error extracting file:", error);
-                outputDiv.innerText = 'Error extracting file: ' + error.message;
-            }
-        });
-    </script>
-
-    <style>
-        /* Center the content on the page */
-        body, html {
-            height: 100%;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: Arial, sans-serif;
-            background-color: #f4f44;
-        }
-        .container {
-            text-align: center;
-            padding: 20px;
-        }
-        #output {
-            margin-top: 20px;
-        }
-    </style>
-
-    <script>
-        console.log("App started."); // Log before any module loading
-    </script>
 </body>
+<script>
+  console.log("yes"); 
+</script>
 </html>
