@@ -4,11 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Extract .7z File</title>
+    <!-- 7z.js Script from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/7z.js/dist/7z.min.js"></script>
     <style>
-        body {
+        /* Center the content on the page */
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-family: Arial, sans-serif;
-            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         #output {
             margin-top: 20px;
@@ -16,27 +30,44 @@
     </style>
 </head>
 <body>
-    <h1>Extract .7z File</h1>
-    <p>Select a .7z file to extract its contents:</p>
-    
-    <input type="file" id="file-input" accept=".7z" />
-    <div id="output"></div>
+    <div class="container">
+        <h1>Extract .7z File</h1>
+        <p>Select a .7z file to extract its contents:</p>
+        <input type="file" id="file-input" accept=".7z" />
+        <div id="output"></div>
+    </div>
 
     <script>
+        // Log a message when the 7z.js library is loaded successfully
+        window.onload = function() {
+            if (typeof SevenZip !== 'undefined') {
+                console.log("7z.js library loaded successfully.");
+            } else {
+                console.error("Failed to load 7z.js library.");
+            }
+        };
+
         document.getElementById('file-input').addEventListener('change', function(event) {
             var file = event.target.files[0];
             if (file && file.name.endsWith('.7z')) {
-                // Display loading message
+                // Log file selection and start extracting
+                console.log(`Selected file: ${file.name}`);
                 document.getElementById('output').innerText = 'Extracting...';
 
                 var reader = new FileReader();
                 reader.onload = function(e) {
                     var data = new Uint8Array(e.target.result);
 
+                    // Log when extraction starts
+                    console.log("Extraction started...");
+
                     // Extract using 7z.js
-                    SevenZip.extract(data, { 
+                    SevenZip.extract(data, {
                         memory: 200 * 1024 * 1024 // Allocate 200MB of memory for extraction
                     }).then(function(files) {
+                        // Log extraction result
+                        console.log("Extraction completed.");
+
                         var outputDiv = document.getElementById('output');
                         outputDiv.innerHTML = ''; // Clear previous content
                         if (files && files.length > 0) {
@@ -53,12 +84,16 @@
                             outputDiv.innerText = 'No files found in the .7z archive.';
                         }
                     }).catch(function(err) {
+                        // Log extraction error
+                        console.error("Error extracting file:", err);
                         document.getElementById('output').innerText = 'Error extracting file: ' + err.message;
                     });
                 };
-                
+
                 reader.readAsArrayBuffer(file);
             } else {
+                // Log invalid file type
+                console.error("Invalid file type. Please select a valid .7z file.");
                 document.getElementById('output').innerText = 'Please select a valid .7z file.';
             }
         });
