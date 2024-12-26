@@ -7,6 +7,8 @@
     <script type="module">
         import * as 7z from 'https://cdn.skypack.dev/7z-wasm'; 
 
+        console.log("7z-wasm library loaded:", 7z); // Log the loaded 7z module
+
         const fileInput = document.getElementById('file-input');
         const outputDiv = document.getElementById('output');
 
@@ -21,6 +23,7 @@
 
             try {
                 const arrayBuffer = await file.arrayBuffer(); 
+                console.log("File read successfully."); // Log successful file read
                 const { files } = await 7z.extract(arrayBuffer);
 
                 outputDiv.innerHTML = ''; 
@@ -52,7 +55,7 @@
             justify-content: center;
             align-items: center;
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #f4f44;
         }
         .container {
             text-align: center;
