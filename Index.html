@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extract .7z File</title>
+    <script src="https://cdn.jsdelivr.net/npm/7z.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #output {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Extract .7z File</h1>
+    <p>Select a .7z file to extract its contents:</p>
+    
+    <input type="file" id="file-input" accept=".7z" />
+    <div id="output"></div>
+
+    <script>
+        document.getElementById('file-input').addEventListener('change', function(event) {
+            var file = event.target.files[0];
+            if (file && file.name.endsWith('.7z')) {
+                // Display loading message
+                document.getElementById('output').innerText = 'Extracting...';
+
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var data = new Uint8Array(e.target.result);
+
+                    // Extract using 7z.js
+                    SevenZip.extract(data, { 
+                        memory: 200 * 1024 * 1024 // Allocate 200MB of memory for extraction
+                    }).then(function(files) {
+                        var outputDiv = document.getElementById('output');
+                        outputDiv.innerHTML = ''; // Clear previous content
+                        if (files && files.length > 0) {
+                            files.forEach(function(file) {
+                                // Create a download link for each extracted file
+                                var link = document.createElement('a');
+                                link.href = URL.createObjectURL(new Blob([file.data], {type: 'application/octet-stream'}));
+                                link.download = file.name;
+                                link.innerText = 'Download ' + file.name;
+                                link.style.display = 'block';
+                                outputDiv.appendChild(link);
+                            });
+                        } else {
+                            outputDiv.innerText = 'No files found in the .7z archive.';
+                        }
+                    }).catch(function(err) {
+                        document.getElementById('output').innerText = 'Error extracting file: ' + err.message;
+                    });
+                };
+                
+                reader.readAsArrayBuffer(file);
+            } else {
+                document.getElementById('output').innerText = 'Please select a valid .7z file.';
+            }
+        });
+    </script>
+</body>
+</html>
