@@ -1,12 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Simple Test</title>
+  <title>7z File Extractor (with 7z-wasm)</title>
 </head>
 <body>
+  <h1>7z File Extractor</h1>
+  <input type="file" id="fileInput" accept=".7z">
+  <button id="extractButton">Extract</button>
+  <div id="output"></div>
 
+  <script type="module">
+    import * as 7z from 'https://cdn.skypack.dev/7z-wasm'; 
+
+    const fileInput = document.getElementById('fileInput');
+    const extractButton = document.getElementById('extractButton');
+    const outputDiv = document.getElementById('output');
+
+    extractButton.addEventListener('click', async () => {
+      const file = fileInput.files[0];
+
+      if (!file) {
+        outputDiv.innerHTML = "Please select a 7z file.";
+        return;
+      }
+
+      try {
+        const fileReader = new FileReader();
+        fileReader.onload = async (event) => {
+          const arrayBuffer = event.target.result; 
+          const { files } = await 7z.extract(arrayBuffer); 
+
+          files.forEach((file) => {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(new Blob([file.data], { type: 'application/octet-stream' }));
+            link.download = file.name;
+            link.textContent = 'Download ' + file.name;
+            outputDiv.appendChild(link);
+          });
+        };
+        fileReader.readAsArrayBuffer(file);
+      } catch (error) {
+        outputDiv.innerHTML = "Error extracting file: " + error.message;
+        console.error("Error extracting file:", error);
+      }
+    });
+  </script>
 </body>
-<script>
-  console.log("yes"); 
-</script>
 </html>
